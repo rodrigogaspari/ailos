@@ -1,0 +1,7 @@
+-- Resposta:
+-- *Testado em SQL Server:
+
+SELECT [ASSUNTO], [ANO], COUNT(*) [QUANTIDADE] FROM atendimentos 
+GROUP BY assunto, ano
+HAVING COUNT(*) > 3
+ORDER BY ano desc, count(*) desc 

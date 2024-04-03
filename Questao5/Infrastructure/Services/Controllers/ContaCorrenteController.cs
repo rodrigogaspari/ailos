@@ -18,7 +18,7 @@ namespace Questao5.Infrastructure.Services.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [HttpGet("{idContaCorrente}/saldo")]
-        public ActionResult<IEnumerable<ContaCorrenteModel>> Get(
+        public ActionResult<IEnumerable<ConsultaSaldoResponse>> Get(
             [FromServices] ContaCorrenteRepository repository, string idContaCorrente)
         {
             if(!repository.IsValidAccount(idContaCorrente))

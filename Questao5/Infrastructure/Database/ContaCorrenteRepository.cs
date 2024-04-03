@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Dapper;
+using Newtonsoft.Json;
 
 namespace Questao5.Infrastructure.Database
 {
@@ -13,9 +14,9 @@ namespace Questao5.Infrastructure.Database
             _session = session;
         }
 
-        public IEnumerable<ContaCorrenteModel> GetSaldo(string idContaCorrente)
+        public IEnumerable<ConsultaSaldoResponse> GetSaldo(string idContaCorrente)
         {
-            return _session.Connection.Query<ContaCorrenteModel>(
+            return _session.Connection.Query<ConsultaSaldoResponse>(
                     @"
                     SELECT 
                      r.Numero
@@ -64,19 +65,25 @@ namespace Questao5.Infrastructure.Database
 
     }
 
-    public class ContaCorrenteModel
+    public class ConsultaSaldoResponse
     {
-        public string IdContaCorrente { get; set; }
-
         public int Numero { get; set; }
 
-        public string Nome { get; set; }
-
-        public Boolean Ativo { get; set; }
+        public string? Nome { get; set; }
 
         public DateTime SaldoDataHora { get; set; }
 
         public decimal Saldo { get; set; }
+    }
 
+    public class ContaCorrenteModel
+    {
+        public string? IdContaCorrente { get; set; }
+
+        public int Numero { get; set; }
+
+        public string? Nome { get; set; }
+
+        public Boolean Ativo { get; set; }
     }
 }

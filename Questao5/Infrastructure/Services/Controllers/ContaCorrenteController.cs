@@ -1,5 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
-using Questao5.Infrastructure.Database;
+using Questao5.Application.Abstractions;
+using Questao5.Application.Commands.Requests;
+using Questao5.Application.Queries.Responses;
+using Questao5.Infrastructure.Database.Repository;
 
 namespace Questao5.Infrastructure.Services.Controllers
 {
@@ -17,17 +20,62 @@ namespace Questao5.Infrastructure.Services.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        [HttpGet("{idContaCorrente}/saldo")]
+        [Route("{idContaCorrente}/saldo")]
+        [HttpGet()]
         public ActionResult<IEnumerable<ConsultaSaldoResponse>> Get(
-            [FromServices] ContaCorrenteRepository repository, string idContaCorrente)
+            [FromServices] SaldoRepository saldoRepository,
+            [FromServices] ContaCorrenteRepository contaCorrenteRepository,
+            string idContaCorrente)
         {
-            if(!repository.IsValidAccount(idContaCorrente))
+            if(!contaCorrenteRepository.IsValidAccount(idContaCorrente))
                 return NotFound("Conta inexistente.");
 
-            if(!repository.IsActiveAccount(idContaCorrente))   
+            if(!contaCorrenteRepository.IsActiveAccount(idContaCorrente))   
                 return BadRequest("Conta inativa para esta operação.");
 
-            return Ok(repository.GetSaldo(idContaCorrente));
+            return Ok(saldoRepository.GetSaldo(idContaCorrente));
         }
+
+
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [Route("{idContaCorrente}/movimentacao")]
+        [HttpPost()]
+        public IActionResult Post(
+            [FromServices] IUnitOfWork unitOfWork,
+            [FromServices] MovimentoRepository movimentoRepository,
+            [FromServices] ContaCorrenteRepository contaCorrenteRepository,
+            [FromRoute] string idContaCorrente,
+            CriarMovimentacaoRequest request)
+        {
+            if (!contaCorrenteRepository.IsValidAccount(idContaCorrente))
+                return NotFound("Conta inexistente.");
+
+            if (!contaCorrenteRepository.IsActiveAccount(idContaCorrente))
+                return BadRequest("Conta inativa para esta operação.");
+
+            if (request.Valor is null || request.Valor <= 0)
+                return BadRequest("Valor inválido para esta operação.");
+
+            if (request.TipoMovimento is null || (!request.TipoMovimento.Equals("D") && !request.TipoMovimento.Equals("C")) )
+                return BadRequest("Tipo de Movimento inválido para esta operação.");
+
+            if (!contaCorrenteRepository.IsActiveAccount(idContaCorrente))
+                return BadRequest("Conta inativa para esta operação.");
+
+            if (request is null)
+                return BadRequest("Requisição vazia.");
+
+
+            unitOfWork.BeginTransaction();
+
+            movimentoRepository.Save(idContaCorrente, request);
+
+            unitOfWork.Commit();
+
+            return Ok();
+        }
+          
     }
 }

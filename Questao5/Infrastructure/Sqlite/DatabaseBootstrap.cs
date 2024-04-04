@@ -31,7 +31,7 @@ namespace Questao5.Infrastructure.Sqlite
 
             connection.Execute("CREATE TABLE movimento ( " +
                 "idmovimento TEXT(37) PRIMARY KEY," +
-                "idcontacorrente INTEGER(10) NOT NULL," +
+                "idcontacorrente TEXT(37) NOT NULL," +
                 "datamovimento TEXT(25) NOT NULL," +
                 "tipomovimento TEXT(1) NOT NULL," +
                 "valor REAL NOT NULL," +

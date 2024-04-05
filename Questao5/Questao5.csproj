@@ -8,6 +8,17 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="C:\Users\rodri\.nuget\packages\microsoft.testplatform.testhost\17.4.0-preview-20220726-02\build\netcoreapp2.1\x64\testhost.dll" />
+    <Content Remove="C:\Users\rodri\.nuget\packages\microsoft.testplatform.testhost\17.4.0-preview-20220726-02\build\netcoreapp2.1\x64\testhost.exe" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="C:\Users\rodri\.nuget\packages\xunit.runner.visualstudio\2.4.5\build\netcoreapp3.1\xunit.runner.reporters.netcoreapp10.dll" />
+    <None Remove="C:\Users\rodri\.nuget\packages\xunit.runner.visualstudio\2.4.5\build\netcoreapp3.1\xunit.runner.utility.netcoreapp10.dll" />
+    <None Remove="C:\Users\rodri\.nuget\packages\xunit.runner.visualstudio\2.4.5\build\netcoreapp3.1\xunit.runner.visualstudio.dotnetcore.testadapter.dll" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Dapper" Version="2.1.35" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
 	<PackageReference Include="Microsoft.Data.Sqlite" Version="3.1.6" />

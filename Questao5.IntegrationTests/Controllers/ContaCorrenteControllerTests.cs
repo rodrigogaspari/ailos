@@ -44,7 +44,7 @@ namespace Questao5.IntegrationTests.Controllers
 
 
         [Fact]
-        public async Task CreateVerificaSaldo_ShouldReturn_OK()
+        public async Task CreateMovimentacaoAndGetSaldo_ShouldReturn_OK()
         {
             //Arrange
             var client = _factory.CreateClient();
@@ -73,7 +73,7 @@ namespace Questao5.IntegrationTests.Controllers
 
 
         [Fact]
-        public async Task PostTest_ShouldReturnCachedResponse()
+        public async Task CreateDuplicationMovimentacaoAndGetVerificaSaldo_ShouldReturn_ConsistenceBalance()
         {
             // Arrange
             var client = _factory.CreateClient();

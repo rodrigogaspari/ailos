@@ -3,5 +3,7 @@
     public interface IDatabaseBootstrap
     {
         void Setup();
+
+        void EnsureDeleted();
     }
 }

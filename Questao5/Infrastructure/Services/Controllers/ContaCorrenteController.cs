@@ -22,7 +22,7 @@ namespace Questao5.Infrastructure.Services.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [Route("{idContaCorrente}/saldo")]
         [HttpGet()]
-        public ActionResult<IEnumerable<ConsultaSaldoResponse>> Get(
+        public ActionResult<ConsultaSaldoResponse> Get(
             [FromServices] SaldoRepository saldoRepository,
             [FromServices] ContaCorrenteRepository contaCorrenteRepository,
             string idContaCorrente)

@@ -51,5 +51,26 @@ namespace Questao5.Infrastructure.Sqlite
             connection.Execute("INSERT INTO contacorrente(idcontacorrente, numero, nome, ativo) VALUES('BCDACA4A-7067-ED11-AF81-825DFA4A16C9', 852, 'Jarrad Mckee', 0);");
             connection.Execute("INSERT INTO contacorrente(idcontacorrente, numero, nome, ativo) VALUES('D2E02051-7067-ED11-94C0-835DFA4A16C9', 963, 'Elisha Simons', 0);");
         }
+
+        public void EnsureDeleted()
+        {
+            using var connection = new SqliteConnection(databaseConfig.Name);
+
+            FileInfo fi = new FileInfo(Path.Combine(Environment.CurrentDirectory, databaseConfig.DatabaseName));
+            try
+            {
+                if (fi.Exists)
+                {
+                    connection.Close();
+                    GC.Collect();
+                    GC.WaitForPendingFinalizers();
+                    fi.Delete();
+                }
+            }
+            catch (Exception)
+            {
+                fi.Delete();
+            }
+        }
     }
 }

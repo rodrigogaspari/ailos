@@ -1,5 +1,6 @@
 ﻿namespace Questao5.Application.Commands.Requests
 {
+    [Serializable]
     public class CriarMovimentacaoRequest
     {
         public string? IdRequisicao { get; set; }

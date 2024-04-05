@@ -5,6 +5,8 @@ using Questao5.Infrastructure.Database;
 using Questao5.Infrastructure.Database.Repository;
 using Questao5.Infrastructure.Sqlite;
 using System.Reflection;
+using IdempotentAPI.Extensions.DependencyInjection;
+using IdempotentAPI.Cache.DistributedCache.Extensions.DependencyInjection;
 
 public class Program
 {
@@ -31,6 +33,11 @@ public class Program
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
+
+        // Idempotency with IdempotentAPI, learn more about IdempotentAPI at https://github.com/ikyriak/IdempotentAPI/blob/master/README.md 
+        builder.Services.AddIdempotentAPI();
+        builder.Services.AddDistributedMemoryCache();
+        builder.Services.AddIdempotentAPIUsingDistributedCache();
 
         var app = builder.Build();
 

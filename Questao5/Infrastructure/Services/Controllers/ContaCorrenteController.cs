@@ -1,3 +1,4 @@
+using IdempotentAPI.Filters;
 using Microsoft.AspNetCore.Mvc;
 using Questao5.Application.Abstractions;
 using Questao5.Application.Commands.Requests;
@@ -41,6 +42,7 @@ namespace Questao5.Infrastructure.Services.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [Route("{idContaCorrente}/movimentacao")]
+        [Idempotent(Enabled = true, ExpireHours = 24)]
         [HttpPost()]
         public IActionResult Post(
             [FromServices] IUnitOfWork unitOfWork,

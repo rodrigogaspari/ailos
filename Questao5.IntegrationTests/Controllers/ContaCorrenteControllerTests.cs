@@ -73,7 +73,7 @@ namespace Questao5.IntegrationTests.Controllers
 
 
         [Fact]
-        public async Task CreateDuplicationMovimentacaoAndGetVerificaSaldo_ShouldReturn_ConsistenceBalance()
+        public async Task CreateDuplicationMovimentacaoAndGetVerificaSaldo_ShouldReturn_ConsistentBalance()
         {
             // Arrange
             var client = _factory.CreateClient();

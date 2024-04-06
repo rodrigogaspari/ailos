@@ -34,7 +34,8 @@ public class Program
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
 
-        // Idempotency with IdempotentAPI, learn more about IdempotentAPI at https://github.com/ikyriak/IdempotentAPI/blob/master/README.md 
+        // Idempotency with IdempotentAPI, learn more about IdempotentAPI at
+        // https://github.com/ikyriak/IdempotentAPI/blob/master/README.md 
         builder.Services.AddIdempotentAPI();
         builder.Services.AddDistributedMemoryCache();
         builder.Services.AddIdempotentAPIUsingDistributedCache();

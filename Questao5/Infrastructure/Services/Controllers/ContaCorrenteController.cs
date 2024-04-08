@@ -1,9 +1,11 @@
 using IdempotentAPI.Filters;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Questao5.Application.Abstractions;
+using Questao5.Application.Commands;
 using Questao5.Application.Commands.Requests;
+using Questao5.Application.Queries;
 using Questao5.Application.Queries.Responses;
-using Questao5.Infrastructure.Database.Repository;
 
 namespace Questao5.Infrastructure.Services.Controllers
 {
@@ -12,10 +14,12 @@ namespace Questao5.Infrastructure.Services.Controllers
     public class ContaCorrenteController : ControllerBase
     {
         private readonly ILogger<ContaCorrenteController> _logger;
+        private readonly IMediator _mediator;
 
-        public ContaCorrenteController(ILogger<ContaCorrenteController> logger)
+        public ContaCorrenteController(ILogger<ContaCorrenteController> logger, IMediator mediator)
         {
             _logger = logger;
+            _mediator = mediator;
         }
 
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -23,9 +27,8 @@ namespace Questao5.Infrastructure.Services.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [Route("{idContaCorrente}/saldo")]
         [HttpGet()]
-        public ActionResult<ConsultaSaldoResponse> Get(
-            [FromServices] SaldoRepository saldoRepository,
-            [FromServices] ContaCorrenteRepository contaCorrenteRepository,
+        public async Task<ActionResult<ConsultaSaldoResponse>> GetAsync(
+            [FromServices] IContaCorrenteRepository contaCorrenteRepository,
             string idContaCorrente)
         {
             if(!contaCorrenteRepository.IsValidAccount(idContaCorrente))
@@ -34,22 +37,24 @@ namespace Questao5.Infrastructure.Services.Controllers
             if(!contaCorrenteRepository.IsActiveAccount(idContaCorrente))   
                 return BadRequest("Conta inativa para esta operação.");
 
-            return Ok(saldoRepository.GetSaldo(idContaCorrente));
+
+            var saldoResponse = await _mediator.Send(new GetSaldoByIdQuery() { IdContaCorrente = idContaCorrente });
+
+            return Ok(saldoResponse);
         }
 
 
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        [Route("{idContaCorrente}/movimentacao")]
+        [Route("{idContaCorrente}/movimento")]
         [Idempotent(Enabled = true, ExpireHours = 24)]
         [HttpPost()]
-        public IActionResult Post(
-            [FromServices] IUnitOfWork unitOfWork,
-            [FromServices] MovimentoRepository movimentoRepository,
-            [FromServices] ContaCorrenteRepository contaCorrenteRepository,
+        public async Task<ActionResult> Post(
+            [FromServices] IContaCorrenteRepository contaCorrenteRepository,
             [FromRoute] string idContaCorrente,
-            CriarMovimentacaoRequest request)
+            CriarMovimentoRequest request
+            )
         {
             if (!contaCorrenteRepository.IsValidAccount(idContaCorrente))
                 return NotFound("Conta inexistente.");
@@ -69,12 +74,9 @@ namespace Questao5.Infrastructure.Services.Controllers
             if (request is null)
                 return BadRequest("Requisição vazia.");
 
+            request.IdContaCorrente = idContaCorrente;
 
-            unitOfWork.BeginTransaction();
-
-            movimentoRepository.Save(idContaCorrente, request);
-
-            unitOfWork.Commit();
+            await _mediator.Send(new CreateMovimentoCommand() { Request = request });
 
             return Ok();
         }

@@ -1,9 +1,10 @@
 ﻿using Dapper;
+using Questao5.Application.Abstractions;
 using Questao5.Application.Queries.Responses;
 
 namespace Questao5.Infrastructure.Database.Repository
 {
-    public class SaldoRepository
+    public class SaldoRepository : ISaldoRepository
     {
         private DbSession _session;
 
@@ -12,9 +13,9 @@ namespace Questao5.Infrastructure.Database.Repository
             _session = session;
         }
 
-        public IEnumerable<ConsultaSaldoResponse> GetSaldo(string idContaCorrente)
+        public Task<ConsultaSaldoResponse> GetSaldo(string idContaCorrente)
         {
-            return _session.Connection.Query<ConsultaSaldoResponse>(
+            return Task.FromResult(_session.Connection.Query<ConsultaSaldoResponse>(
                     @"
                     SELECT 
                      r.Numero
@@ -36,7 +37,7 @@ namespace Questao5.Infrastructure.Database.Repository
                     
                         WHERE 
                         m.idcontacorrente=@idContaCorrente
-                    )as r", new { idContaCorrente }, _session.Transaction);
+                    )as r", new { idContaCorrente }, _session.Transaction).FirstOrDefault() ?? new ConsultaSaldoResponse());
         }
     }
 }

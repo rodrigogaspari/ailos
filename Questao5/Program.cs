@@ -1,12 +1,12 @@
 using FluentAssertions.Common;
+using IdempotentAPI.Cache.DistributedCache.Extensions.DependencyInjection;
+using IdempotentAPI.Extensions.DependencyInjection;
 using MediatR;
 using Questao5.Application.Abstractions;
 using Questao5.Infrastructure.Database;
 using Questao5.Infrastructure.Database.Repository;
 using Questao5.Infrastructure.Sqlite;
 using System.Reflection;
-using IdempotentAPI.Extensions.DependencyInjection;
-using IdempotentAPI.Cache.DistributedCache.Extensions.DependencyInjection;
 
 public class Program
 {
@@ -23,12 +23,17 @@ public class Program
         builder.Services.AddSingleton(new DatabaseConfig { Name = builder.Configuration.GetValue("DatabaseName", "Data Source=database.sqlite")});
         builder.Services.AddSingleton<IDatabaseBootstrap, DatabaseBootstrap>();
 
-
+        //MediatR
+        builder.Services.AddMediatR(Assembly.GetExecutingAssembly());
+        
+        //Data
         builder.Services.AddScoped<DbSession>();
-        builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
-        builder.Services.AddTransient<SaldoRepository>();
-        builder.Services.AddTransient<MovimentoRepository>();
-        builder.Services.AddTransient<ContaCorrenteRepository>();
+        builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+        //Repositories
+        builder.Services.AddScoped<ISaldoRepository, SaldoRepository>();
+        builder.Services.AddScoped<IMovimentoRepository, MovimentoRepository>();
+        builder.Services.AddScoped<IContaCorrenteRepository, ContaCorrenteRepository>();
 
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();

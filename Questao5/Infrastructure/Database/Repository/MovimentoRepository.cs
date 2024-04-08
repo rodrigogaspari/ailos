@@ -1,9 +1,10 @@
 ﻿using Dapper;
+using Questao5.Application.Abstractions;
 using Questao5.Application.Commands.Requests;
 
 namespace Questao5.Infrastructure.Database.Repository
 {
-    public class MovimentoRepository
+    public class MovimentoRepository : IMovimentoRepository
     {
         private DbSession _session;
 
@@ -11,16 +12,14 @@ namespace Questao5.Infrastructure.Database.Repository
         {
             _session = session;
         }
-        public async void Save(string idContaCorrente, CriarMovimentacaoRequest request)
+        public async void Save(CriarMovimentoRequest request)
         {
-            //request.IdRequisicao //Implementar controle de Idempotência
-
             var input = new MovimentoModel()
             {
                 IdMovimento = Guid.NewGuid().ToString(),
-                IdContaCorrente = idContaCorrente,
+                IdContaCorrente = request?.IdContaCorrente,
                 DataMovimento = DateTime.Now,
-                TipoMovimento = request.TipoMovimento,
+                TipoMovimento = request?.TipoMovimento,
                 Valor = request.Valor.Value,
             };
 

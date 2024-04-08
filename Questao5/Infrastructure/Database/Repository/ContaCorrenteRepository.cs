@@ -1,8 +1,9 @@
 ﻿using Dapper;
+using Questao5.Application.Abstractions;
 
 namespace Questao5.Infrastructure.Database.Repository
 {
-    public class ContaCorrenteRepository
+    public class ContaCorrenteRepository : IContaCorrenteRepository
     {
         private DbSession _session;
 

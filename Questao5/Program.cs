@@ -5,10 +5,10 @@ using IdempotentAPI.Extensions.DependencyInjection;
 using MediatR;
 using Questao5.Application.Abstractions;
 using Questao5.Application.Middlewares;
+using Questao5.Application.SwaggerGen;
 using Questao5.Application.Validation;
 using Questao5.Infrastructure.Database;
 using Questao5.Infrastructure.Database.Repository;
-using Questao5.Infrastructure.Services.Controllers;
 using Questao5.Infrastructure.Sqlite;
 
 public class Program

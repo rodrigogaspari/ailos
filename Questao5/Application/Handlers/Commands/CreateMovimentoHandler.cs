@@ -1,8 +1,7 @@
 ﻿using MediatR;
 using Questao5.Application.Abstractions;
 using Questao5.Application.Commands;
-using Questao5.Application.Commands.Requests;
-using System.Reflection.Metadata;
+using Questao5.Infrastructure.Database.Repository;
 
 namespace Questao5.Application.Handlers.Commands
 {
@@ -19,16 +18,20 @@ namespace Questao5.Application.Handlers.Commands
             _unitOfWork = unitOfWork;
         }
 
-        public Task<Unit> Handle(CreateMovimentoCommand command, CancellationToken cancellationToken)
+        public async Task Handle(CreateMovimentoCommand command, CancellationToken cancellationToken)
         {
-
             _unitOfWork.BeginTransaction();
 
-            _movimentoRepository.Save(command.Request);
+            _movimentoRepository.Save(
+                new MovimentoModel()
+                {
+                    IdContaCorrente = command.IdContaCorrente,
+                    TipoMovimento = command.TipoMovimento,
+                    Valor = command.Valor.GetValueOrDefault()
+                });
 
             _unitOfWork.Commit();
 
-            return Unit.Task;
         }
 
     }

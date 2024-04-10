@@ -1,6 +1,6 @@
 ﻿using Dapper;
 using Questao5.Application.Abstractions;
-using Questao5.Application.Commands.Requests;
+using Questao5.Application.Abstractions.Model;
 
 namespace Questao5.Infrastructure.Database.Repository
 {
@@ -12,16 +12,12 @@ namespace Questao5.Infrastructure.Database.Repository
         {
             _session = session;
         }
-        public async void Save(CriarMovimentoRequest request)
+        public async void Save(IMovimentoModel movimentoModel)
         {
-            var input = new MovimentoModel()
-            {
-                IdMovimento = Guid.NewGuid().ToString(),
-                IdContaCorrente = request?.IdContaCorrente,
-                DataMovimento = DateTime.Now,
-                TipoMovimento = request?.TipoMovimento,
-                Valor = request.Valor.Value,
-            };
+
+            movimentoModel.IdMovimento = Guid.NewGuid().ToString();
+            movimentoModel.DataMovimento = DateTime.Now;
+
 
             await _session.Connection.ExecuteAsync(
                 @"INSERT INTO movimento 
@@ -29,12 +25,11 @@ namespace Questao5.Infrastructure.Database.Repository
                 
                 VALUES 
                 (@IdMovimento, @IdContaCorrente, @DataMovimento, @TipoMovimento, @Valor);"
-                , input);
+                , movimentoModel);
         }
     }
 
-
-    public class MovimentoModel
+    public class MovimentoModel : IMovimentoModel
     {
         public string IdMovimento { get; set; }
 

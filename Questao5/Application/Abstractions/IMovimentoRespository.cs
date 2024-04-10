@@ -1,9 +1,9 @@
-﻿using Questao5.Application.Commands.Requests;
+﻿using Questao5.Application.Abstractions.Model;
 
 namespace Questao5.Application.Abstractions
 {
     public interface IMovimentoRepository
     {
-        void Save(CriarMovimentoRequest request);
+        public void Save(IMovimentoModel movimentoModel);
     }
 }

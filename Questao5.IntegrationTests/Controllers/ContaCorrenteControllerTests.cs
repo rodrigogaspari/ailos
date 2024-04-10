@@ -1,5 +1,4 @@
 ﻿using FluentAssertions;
-using Microsoft.AspNetCore.Mvc;
 using Questao5.Application.Commands.Requests;
 using Questao5.Application.Queries.Responses;
 using Questao5.IntegrationTests.Factories;
@@ -27,11 +26,9 @@ namespace Questao5.IntegrationTests.Controllers
             client.DefaultRequestHeaders.Clear();
             client.DefaultRequestHeaders.Add("IdempotencyKey", guid);
 
-
             //Act
             var request = new CriarMovimentoRequest()
             {
-                IdContaCorrente = Guid.NewGuid().ToString(),
                 TipoMovimento = "C",
                 Valor = 50
             };
@@ -56,7 +53,6 @@ namespace Questao5.IntegrationTests.Controllers
             //Act
             var request = new CriarMovimentoRequest()
             {
-                IdContaCorrente = Guid.NewGuid().ToString(),
                 TipoMovimento = "C",
                 Valor = 150
             };
@@ -83,7 +79,6 @@ namespace Questao5.IntegrationTests.Controllers
             // Act
             var request = new CriarMovimentoRequest()
             {
-                IdContaCorrente = Guid.NewGuid().ToString(),
                 TipoMovimento = "C",
                 Valor = 150
             };
@@ -103,6 +98,140 @@ namespace Questao5.IntegrationTests.Controllers
             response2.StatusCode.Should().Be(HttpStatusCode.OK);
 
             responseSaldo?.Saldo.Should().Be(150);
+        }
+
+        [Fact]
+        public async Task TryCreateMovimentoWithUnexistentAccount_ShouldReturn_BadRequest_WithMessage_ContaInexistente()
+        {
+            // Arrange
+            var client = _factory.CreateClient();
+            var guid = Guid.NewGuid().ToString();
+            client.DefaultRequestHeaders.Clear();
+            client.DefaultRequestHeaders.Add("IdempotencyKey", guid);
+
+            // Act
+            var request = new CriarMovimentoRequest()
+            {
+                TipoMovimento = "C",
+                Valor = 150
+            };
+            var idContaCorrente = "B6BAFC09-6967-ED11-A567-055DFA4A9999";
+
+            var response = await client.PostAsJsonAsync($"api/v1/ContaCorrente/{idContaCorrente}/movimento", request);
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+            response.Content.ReadAsStringAsync().Result.Should().Contain("Conta inexistente.");
+        }
+
+        [Fact]
+        public async Task TryCreateMovimentoWithInactiveAccount_ShouldReturn_BadRequest_WithMessage_ContaInativa()
+        {
+            // Arrange
+            var client = _factory.CreateClient();
+            var guid = Guid.NewGuid().ToString();
+            client.DefaultRequestHeaders.Clear();
+            client.DefaultRequestHeaders.Add("IdempotencyKey", guid);
+
+            // Act
+            var request = new CriarMovimentoRequest()
+            {
+                TipoMovimento = "C",
+                Valor = 150
+            };
+            var idContaCorrente = "F475F943-7067-ED11-A06B-7E5DFA4A16C9"; 
+
+            var response = await client.PostAsJsonAsync($"api/v1/ContaCorrente/{idContaCorrente}/movimento", request);
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+            response.Content.ReadAsStringAsync().Result.Should().Contain("Conta inativa para esta operacao");
+        }
+
+
+        [Fact]
+        public async Task TryCreateMovimentoWithInvalidAmount_ShouldReturn_BadRequest_WithMessage_ValorInvalido()
+        {
+            // Arrange
+            var client = _factory.CreateClient();
+            var guid = Guid.NewGuid().ToString();
+            client.DefaultRequestHeaders.Clear();
+            client.DefaultRequestHeaders.Add("IdempotencyKey", guid);
+
+            // Act
+            var request = new CriarMovimentoRequest()
+            {
+                TipoMovimento = "C",
+                Valor = 0
+            };
+            var idContaCorrente = "382D323D-7067-ED11-8866-7D5DFA4A16C9";
+
+            var response = await client.PostAsJsonAsync($"api/v1/ContaCorrente/{idContaCorrente}/movimento", request);
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+            response.Content.ReadAsStringAsync().Result.Should().Contain("Valor invalido para esta operacao.");
+        }
+
+
+        [Fact]
+        public async Task TryCreateMovimentoWithInvalidMovimentType_ShouldReturn_BadRequest_WithMessage_TipoDeMovimentoInvalido()
+        {
+            // Arrange
+            var client = _factory.CreateClient();
+            var guid = Guid.NewGuid().ToString();
+            client.DefaultRequestHeaders.Clear();
+            client.DefaultRequestHeaders.Add("IdempotencyKey", guid);
+
+            // Act
+            var request = new CriarMovimentoRequest()
+            {
+                TipoMovimento = "$",
+                Valor = 10
+            };
+            var idContaCorrente = "382D323D-7067-ED11-8866-7D5DFA4A16C9";
+
+            var response = await client.PostAsJsonAsync($"api/v1/ContaCorrente/{idContaCorrente}/movimento", request);
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+            response.Content.ReadAsStringAsync().Result.Should().Contain("Tipo de movimento invalido para esta operacao");
+        }
+
+        [Fact]
+        public async Task TryGetSaldoContaWithUnexistentAccount_ShouldReturn_BadRequest_WithMessage_ContaInexistente()
+        {
+            // Arrange
+            var client = _factory.CreateClient();
+            var guid = Guid.NewGuid().ToString();
+            client.DefaultRequestHeaders.Clear();
+
+            // Act
+            var idContaCorrente = "B6BAFC09-6967-ED11-A567-055DFA4A9999";
+
+            var responseSaldo = await client.GetAsync($"api/v1/ContaCorrente/{idContaCorrente}/saldo");
+
+            // Assert
+            responseSaldo.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+            responseSaldo.Content.ReadAsStringAsync().Result.Should().Contain("Conta inexistente.");
+        }
+
+        [Fact]
+        public async Task TryGetSaldoContaWithInactiveAccount_ShouldReturn_BadRequest_WithMessage_ContaInativa()
+        {
+            // Arrange
+            var client = _factory.CreateClient();
+            var guid = Guid.NewGuid().ToString();
+            client.DefaultRequestHeaders.Clear();
+
+            // Act
+            var idContaCorrente = "F475F943-7067-ED11-A06B-7E5DFA4A16C9";
+
+            var responseSaldo = await client.GetAsync($"api/v1/ContaCorrente/{idContaCorrente}/saldo");
+
+            // Assert
+            responseSaldo.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+            responseSaldo.Content.ReadAsStringAsync().Result.Should().Contain("Conta inativa para esta operacao");
         }
     }
 }

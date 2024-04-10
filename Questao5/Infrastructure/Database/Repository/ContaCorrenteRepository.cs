@@ -14,13 +14,13 @@ namespace Questao5.Infrastructure.Database.Repository
 
         public bool IsValidAccount(string? idContaCorrente)
         {
-            return _session.Connection.Query<bool>(
+            return _session.Connection.QueryFirst<bool>(
                 @"SELECT 
                 count(0) as BIT 
                    
                 FROM contacorrente c 
 
-                WHERE c.idcontacorrente=@idContaCorrente", new { idContaCorrente }, _session.Transaction).FirstOrDefault();
+                WHERE c.idcontacorrente=@idContaCorrente", new { idContaCorrente }, _session.Transaction);
         }
 
         public bool IsActiveAccount(string? idContaCorrente)

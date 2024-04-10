@@ -8,6 +8,7 @@ using Questao5.Application.Middlewares;
 using Questao5.Application.Validation;
 using Questao5.Infrastructure.Database;
 using Questao5.Infrastructure.Database.Repository;
+using Questao5.Infrastructure.Services.Controllers;
 using Questao5.Infrastructure.Sqlite;
 
 public class Program
@@ -42,7 +43,12 @@ public class Program
 
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();
-        builder.Services.AddSwaggerGen();
+        //builder.Services.AddSwaggerGen();
+        builder.Services.AddSwaggerGen(options =>
+        {
+            options.OperationFilter<AddRequiredHeaderParameter>();
+        });
+
 
         // Idempotency with IdempotentAPI, learn more about IdempotentAPI at
         // https://github.com/ikyriak/IdempotentAPI/blob/master/README.md 

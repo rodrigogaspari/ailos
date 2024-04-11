@@ -19,7 +19,7 @@ namespace Questao5.Application.SwaggerGen
                     Name = "IdempotencyKey",
                     In = ParameterLocation.Header,
                     Schema = new OpenApiSchema() { Type = "String" },
-                    Example = new OpenApiString("63108b20-9bc0-4bab-8729-f0036f8fa195")
+                    Example = new OpenApiString(Guid.NewGuid().ToString())
                 });
             }
         }

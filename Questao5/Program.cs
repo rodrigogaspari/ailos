@@ -20,7 +20,8 @@ public class Program
         // Add services to the container.
         builder.Services.AddControllers();
 
-        // sqlite
+        // Sqlite, learn more about Sqlite at:
+        // https://www.sqlite.org
         builder.Services.AddSingleton(new DatabaseConfig { Name = builder.Configuration.GetValue("DatabaseName", "Data Source=database.sqlite")});
         builder.Services.AddSingleton<IDatabaseBootstrap, DatabaseBootstrap>();
 
@@ -28,7 +29,6 @@ public class Program
         builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Program).Assembly));
 
         // FluentValidation
-        builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));
         builder.Services.AddValidatorsFromAssembly(typeof(Program).Assembly);
         builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));
 
@@ -41,29 +41,20 @@ public class Program
         builder.Services.AddScoped<IMovimentoRepository, MovimentoRepository>();
         builder.Services.AddScoped<IContaCorrenteRepository, ContaCorrenteRepository>();
 
-        // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-        builder.Services.AddEndpointsApiExplorer();
-        //builder.Services.AddSwaggerGen();
-        builder.Services.AddSwaggerGen(options =>
-        {
-            options.OperationFilter<AddRequiredHeaderParameterIdempotencyKey>();
-        });
-
-
         // Idempotency with IdempotentAPI, learn more about IdempotentAPI at
         // https://github.com/ikyriak/IdempotentAPI/blob/master/README.md 
         builder.Services.AddIdempotentAPI();
         builder.Services.AddDistributedMemoryCache();
         builder.Services.AddIdempotentAPIUsingDistributedCache();
 
-        var app = builder.Build();
+        // Customizations in Swagger (services)
+        builder.Services.AddSwaggerAilosCustomizations();
 
-        // Configure the HTTP request pipeline.
-        if (app.Environment.IsDevelopment())
-        {
-            app.UseSwagger();
-            app.UseSwaggerUI();
-        }
+        //Build App
+        var app = builder.Build();
+        
+        // Customizations in Swagger (app)
+        app.AddSwaggerAilosCustomizations();
 
         app.UseHttpsRedirection();
 
@@ -71,19 +62,12 @@ public class Program
 
         app.MapControllers();
 
-        // sqlite
-#pragma warning disable CS8602 // Dereference of a possibly null reference.
+        // Sqlite, learn more about Sqlite at:
+        // https://www.sqlite.org
         app.Services.GetService<IDatabaseBootstrap>().Setup();
-#pragma warning restore CS8602 // Dereference of a possibly null reference.
 
         app.UseErrorMiddleware();
 
         app.Run();
     }
 }
-
-
-// Informações úteis:
-// Tipos do Sqlite - https://www.sqlite.org/datatype3.html
-
-

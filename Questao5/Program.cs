@@ -46,7 +46,7 @@ public class Program
         //builder.Services.AddSwaggerGen();
         builder.Services.AddSwaggerGen(options =>
         {
-            options.OperationFilter<AddRequiredHeaderParameter>();
+            options.OperationFilter<AddRequiredHeaderParameterIdempotencyKey>();
         });
 
 

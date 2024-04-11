@@ -4,7 +4,7 @@ using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace Questao5.Application.SwaggerGen
 {
-    public class AddRequiredHeaderParameter : IOperationFilter
+    public class AddRequiredHeaderParameterIdempotencyKey : IOperationFilter
     {
         public void Apply(OpenApiOperation operation, OperationFilterContext context)
         {

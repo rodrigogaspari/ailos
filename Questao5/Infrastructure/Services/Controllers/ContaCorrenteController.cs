@@ -29,7 +29,7 @@ namespace Questao5.Infrastructure.Services.Controllers
         ///     {URL_BASE}/api/v1/ContaCorrente/382D323D-7067-ED11-8866-7D5DFA4A16C9/saldo
         ///         
         ///</remarks>
-        /// <param name="idContaCorrente">Identificador único da conta corrente</param>
+        /// <param name="idContaCorrente" example="382D323D-7067-ED11-8866-7D5DFA4A16C9">Identificador único da conta corrente</param>
         /// <returns>Saldo da conta corrente no momento da consulta.</returns>
         /// <response code="200">Retorna sucesso na consulta</response>
         /// <response code="400">Se houver algum tipo de problema/validação na consulta</response>
@@ -61,7 +61,7 @@ namespace Questao5.Infrastructure.Services.Controllers
         ///  } 
         ///         
         ///</remarks>
-        /// <param name="idContaCorrente">Identificador único da conta corrente</param>
+        /// <param name="idContaCorrente" example="382D323D-7067-ED11-8866-7D5DFA4A16C9">Identificador único da conta corrente</param>
         /// <param name="request">Corpo da requisição do recurso.</param>
         /// <returns>Saldo da conta corrente no momento da consulta.</returns>
         /// <response code="200">Retorna sucesso na consulta</response>
